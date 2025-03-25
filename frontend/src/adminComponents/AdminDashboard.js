@@ -16,7 +16,7 @@ const AdminDashboard = () => {
         return;
       }
 
-      const response = await fetch("${API_BASE_URL}/api/fir/all", {
+      const response = await fetch(`${API_BASE_URL}/api/fir/all`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

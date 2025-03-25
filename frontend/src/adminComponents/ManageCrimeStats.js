@@ -30,7 +30,7 @@ const ManageCrimeStats = () => {
 
   const fetchCrimeStats = async () => {
     try {
-      const response = await fetch("${API_BASE_URL}/api/crimes/all-crimes");
+      const response = await fetch(`${API_BASE_URL}/api/crimes/all-crimes`);
       const data = await response.json();
 
       const fetchedCrimeTypes = data.map((crime) => crime.name);

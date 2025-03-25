@@ -15,7 +15,7 @@ const CurrentFIRs = () => {
     const fetchFIRData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("${API_BASE_URL}/api/fir/previous", {
+        const response = await fetch(`${API_BASE_URL}/api/fir/previous`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

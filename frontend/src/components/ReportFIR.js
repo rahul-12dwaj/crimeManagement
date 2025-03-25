@@ -60,7 +60,7 @@ const ReportFIR = () => {
     const updatedFormData = { ...formData, date: formattedDate };
 
     try {
-      const response = await fetch("${API_BASE_URL}/api/fir/file", {
+      const response = await fetch(`${API_BASE_URL}/api/fir/file`, {
         method: "POST",
         headers: { 
           Authorization: `Bearer ${localStorage.getItem("token")}`,

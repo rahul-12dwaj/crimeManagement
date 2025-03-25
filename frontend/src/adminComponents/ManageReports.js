@@ -18,7 +18,7 @@ const ManageReports = () => {
         }
   
         // Fetch all FIRs
-        const response = await fetch("${API_BASE_URL}/api/fir/all", {
+        const response = await fetch(`${API_BASE_URL}/api/fir/all`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -35,7 +35,7 @@ const ManageReports = () => {
         setFirs(data);
   
         // Fetch Resolved FIRs (Archived)
-        const resolvedResponse = await fetch("${API_BASE_URL}/api/fir/resolved", {
+        const resolvedResponse = await fetch(`${API_BASE_URL}/api/fir/resolved`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

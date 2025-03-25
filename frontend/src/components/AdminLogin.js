@@ -43,7 +43,7 @@ const AdminLogin = ({ onSwitch }) => {
     }
   
     try {
-      const response = await fetch("${API_BASE_URL}/api/auth/login-admin", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

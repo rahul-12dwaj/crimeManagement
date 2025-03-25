@@ -11,7 +11,7 @@ const CrimeStats = () => {
 
   const fetchCrimeStats = async () => {
     try {
-      const response = await fetch("${API_BASE_URL}/api/crimes/all-crimes"); // Adjust API URL if needed
+      const response = await fetch(`${API_BASE_URL}/api/crimes/all-crimes`); // Adjust API URL if needed
       const data = await response.json();
       
       // Transform data for Recharts
