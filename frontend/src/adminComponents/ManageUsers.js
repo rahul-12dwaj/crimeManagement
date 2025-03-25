@@ -18,7 +18,7 @@ const ManageUsers = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const response = await axios.get(`${API_BASE_URL}/all-users`, { headers });
+      const response = await axios.get(`${API_BASE_URL}/api/auth/all-users`, { headers });
       setUsers(response.data.users);
     } catch (error) {
       console.error("Error fetching users:", error);
