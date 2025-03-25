@@ -1,0 +1,5 @@
+# Ignore environment variables (sensitive data)
+.env
+
+# Ignore dependencies (should not be pushed to GitHub)
+node_modules/
