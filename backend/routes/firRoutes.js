@@ -6,8 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const authenticateUser = require("../middleware/authMiddleware");
 const fs = require("fs");
-const authMiddleware = require("../middleware/authMiddleware"); // Ensure correct path
-const { faMobile } = require("@fortawesome/free-solid-svg-icons");
+const authMiddleware = require("../middleware/authMiddleware");
 
 // Ensure the uploads directory exists
 const uploadDir = "uploads/";
