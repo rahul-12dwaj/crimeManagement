@@ -30,7 +30,7 @@ const ManageUsers = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      await axios.delete(`${API_BASE_URL}/delete-user/${userId}`, { headers });
+      await axios.delete(`${API_BASE_URL}/api/auth/delete-user/${userId}`, { headers });
       setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -51,7 +51,7 @@ const ManageUsers = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      await axios.put(`${API_BASE_URL}/update-user/${editingUser}`, editedData, { headers });
+      await axios.put(`${API_BASE_URL}/api/auth/update-user/${editingUser}`, editedData, { headers });
       fetchUsers(); // Refresh user list after update
       setEditingUser(null);
     } catch (error) {
