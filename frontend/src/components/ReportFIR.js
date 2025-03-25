@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRegSave } from "react-icons/fa";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ReportFIR = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const ReportFIR = () => {
     }
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch("${API_BASE_URL}/api/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!response.ok) throw new Error("Failed to fetch user data.");
@@ -59,7 +60,7 @@ const ReportFIR = () => {
     const updatedFormData = { ...formData, date: formattedDate };
 
     try {
-      const response = await fetch("http://localhost:5000/api/fir/file", {
+      const response = await fetch("${API_BASE_URL}/api/fir/file", {
         method: "POST",
         headers: { 
           Authorization: `Bearer ${localStorage.getItem("token")}`,

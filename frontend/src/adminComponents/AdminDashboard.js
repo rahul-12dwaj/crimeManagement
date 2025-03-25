@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AlertCircle, FileText, Bell } from "lucide-react";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AdminDashboard = () => {
   const [firs, setFirs] = useState([]);
@@ -15,7 +16,7 @@ const AdminDashboard = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/fir/all", {
+      const response = await fetch("${API_BASE_URL}/api/fir/all", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

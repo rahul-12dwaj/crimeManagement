@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Outlet } from "react-router-dom";
 import AdminNavbar from "../adminComponents/AdminNavbar"
 import AdminSidebar from "../adminComponents/AdminSidebar";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Adminhomepage = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const Adminhomepage = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:5000/api/auth/me", {
+        const response = await fetch("${API_BASE_URL}/api/auth/me", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

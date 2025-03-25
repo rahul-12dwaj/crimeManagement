@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const CrimeStats = () => {
   const [crimeData, setCrimeData] = useState([]);
@@ -10,7 +11,7 @@ const CrimeStats = () => {
 
   const fetchCrimeStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/crimes/all-crimes"); // Adjust API URL if needed
+      const response = await fetch("${API_BASE_URL}/api/crimes/all-crimes"); // Adjust API URL if needed
       const data = await response.json();
       
       // Transform data for Recharts

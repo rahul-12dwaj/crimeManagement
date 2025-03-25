@@ -2,6 +2,7 @@ import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { useState, useContext } from "react"; 
 import { AuthContext } from "../context/AuthContext"; 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 
 const Input = ({ type, placeholder, value, onChange, icon }) => (
@@ -42,7 +43,7 @@ const handleLogin = async () => {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch("${API_BASE_URL}/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

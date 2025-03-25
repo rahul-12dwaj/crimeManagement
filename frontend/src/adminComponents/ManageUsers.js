@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Pencil, Trash, Search } from "lucide-react";
-
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);

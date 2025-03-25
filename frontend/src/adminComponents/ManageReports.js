@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FileText, Archive, Edit } from "lucide-react";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ManageReports = () => {
   const [firs, setFirs] = useState([]);
@@ -17,7 +18,7 @@ const ManageReports = () => {
         }
   
         // Fetch all FIRs
-        const response = await fetch("http://localhost:5000/api/fir/all", {
+        const response = await fetch("${API_BASE_URL}/api/fir/all", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -34,7 +35,7 @@ const ManageReports = () => {
         setFirs(data);
   
         // Fetch Resolved FIRs (Archived)
-        const resolvedResponse = await fetch("http://localhost:5000/api/fir/resolved", {
+        const resolvedResponse = await fetch("${API_BASE_URL}/api/fir/resolved", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -82,7 +83,7 @@ const ManageReports = () => {
         return;
       }
   
-      const response = await fetch(`http://localhost:5000/api/fir/updateStatus/${firNumber}`, {
+      const response = await fetch(`${API_BASE_URL}/api/fir/updateStatus/${firNumber}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

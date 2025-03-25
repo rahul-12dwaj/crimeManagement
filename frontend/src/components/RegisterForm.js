@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineMail, AiOutlineLock, AiOutlineUser, AiOutlineMobile } from "react-icons/ai";
 import { MdLocationOn, MdNumbers } from "react-icons/md";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Input = ({ type, placeholder, value, onChange, icon }) => (
   <div className="relative w-full sm:w-80 mb-3">
@@ -35,7 +36,7 @@ const RegisterForm = ({ onSwitch }) => {
     setSuccess("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch("${API_BASE_URL}/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, aadhaar, mobile, email, address, password }),

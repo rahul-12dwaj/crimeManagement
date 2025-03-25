@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const predefinedCrimeTypes = [
   "Select Crime Type",
@@ -29,7 +30,7 @@ const ManageCrimeStats = () => {
 
   const fetchCrimeStats = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/crimes/all-crimes");
+      const response = await fetch("${API_BASE_URL}/api/crimes/all-crimes");
       const data = await response.json();
 
       const fetchedCrimeTypes = data.map((crime) => crime.name);
@@ -51,7 +52,7 @@ const ManageCrimeStats = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/crimes/${selectedCrime}`, {
+      const response = await fetch(`${API_BASE_URL}/api/crimes/${selectedCrime}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ count: parseInt(updateCount) }),

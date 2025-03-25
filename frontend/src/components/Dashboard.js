@@ -9,12 +9,13 @@ const CurrentFIRs = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleteFIR, setDeleteFIR] = useState(null);
   const [showWarning, setShowWarning] = useState(false);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     const fetchFIRData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/fir/previous", {
+        const response = await fetch("${API_BASE_URL}/api/fir/previous", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,7 +51,7 @@ const CurrentFIRs = () => {
     if (!deleteFIR) return;
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/api/fir/delete/${deleteFIR}`, {
+      const response = await fetch(`${API_BASE_URL}/api/fir/delete/${deleteFIR}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
