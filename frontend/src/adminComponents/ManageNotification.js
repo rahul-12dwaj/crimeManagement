@@ -10,6 +10,7 @@ const ManageNotification = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [newReferenceNo, setNewReferenceNo] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   useEffect(() => {
@@ -51,13 +52,15 @@ const ManageNotification = () => {
     if (!newMessage.trim()) return;
     try {
       const token = localStorage.getItem("token");
+      const referenceNo = newReferenceNo.trim() ? newReferenceNo : "NA";
       const response = await axios.post(`${API_BASE_URL}/api/notification/add`,
-        { message: newMessage },
+        { message: newMessage, referenceNo },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifications([...notifications, response.data.notification]);
       setShowAddDialog(false);
       setNewMessage("");
+      setNewReferenceNo("");
     } catch (error) {
       console.error("Error adding notification:", error.response?.data?.message || error.message);
     }
@@ -89,6 +92,7 @@ const ManageNotification = () => {
       <table className="w-full border-collapse border rounded shadow-md">
         <thead>
           <tr className="bg-gray-100">
+            <th className="p-3 border">Ref No.</th>
             <th className="p-3 border">Message</th>
             <th className="p-3 border">Date</th>
             <th className="p-3 border">Actions</th>
@@ -99,6 +103,7 @@ const ManageNotification = () => {
             .filter((n) => n.message.toLowerCase().includes(searchTerm.toLowerCase()))
             .map((notification) => (
               <tr key={notification._id} className="text-center">
+                <td className="p-3 border">{notification.referenceNo || "NA"}</td>
                 <td className="p-3 border">{notification.message}</td>
                 <td className="p-3 border">{new Date(notification.date).toLocaleString()}</td>
                 <td className="p-3 border">
@@ -133,9 +138,16 @@ const ManageNotification = () => {
             <input
               type="text"
               placeholder="Enter notification message..."
-              className="w-full p-2 border rounded mb-4"
+              className="w-full p-2 border rounded mb-2"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Enter reference number (optional)..."
+              className="w-full p-2 border rounded mb-4"
+              value={newReferenceNo}
+              onChange={(e) => setNewReferenceNo(e.target.value)}
             />
             <div className="flex justify-between">
               <button onClick={() => setShowAddDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
