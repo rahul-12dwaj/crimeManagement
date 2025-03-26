@@ -48,23 +48,20 @@ const ManageNotification = () => {
   };
 
   const handleAddNotification = async () => {
-    if (!newTitle.trim() || !newMessage.trim()) return;
+    if (!newMessage.trim()) return;
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        `${API_BASE_URL}/api/notification/add`,
-        { title: newTitle, message: newMessage }, // Include title field
+      const response = await axios.post(`${API_BASE_URL}/api/notification/add`,
+        { message: newMessage }, // Remove referenceNo, it's auto-generated
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifications([...notifications, response.data.notification]);
       setShowAddDialog(false);
-      setNewTitle("");
       setNewMessage("");
     } catch (error) {
       console.error("Error adding notification:", error.response?.data?.message || error.message);
     }
   };
-  
 
   return (
     <div className="max-w-4xl mx-auto">

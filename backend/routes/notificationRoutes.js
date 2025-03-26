@@ -1,46 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const Notification = require("../models/Notification");
-const authMiddleware = require("../middleware/authMiddleware");
-
-// Route to add a new notification
-router.post("/add", authMiddleware, async (req, res) => {
-  try {
-    const { title, message } = req.body;
-    if (!title || !message) {
-      return res.status(400).json({ message: "Title and message are required" });
-    }
-
-    // Create a new notification (refNo is auto-generated in the model)
-    const newNotification = new Notification({ title, message });
-
-    await newNotification.save();
-    res.status(201).json({ message: "Notification added successfully", notification: newNotification });
-  } catch (error) {
-    console.error("Error adding notification:", error);
-    res.status(500).json({ message: "Server error, try again later" });
-  }
-});
 
 // ➤ Add New Notification
-const handleAddNotification = async () => {
-  if (!newTitle.trim() || !newMessage.trim()) return;
+router.post("/add", async (req, res) => {
   try {
-    const token = localStorage.getItem("token");
-    const response = await axios.post(
-      `${API_BASE_URL}/api/notification/add`,
-      { title: newTitle, message: newMessage }, // Include title field
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setNotifications([...notifications, response.data.notification]);
-    setShowAddDialog(false);
-    setNewTitle("");
-    setNewMessage("");
+    const { title, message } = req.body;
+    const newNotification = new Notification({ title, message });
+    await newNotification.save();
+    res.status(201).json({ success: true, message: "Notification added successfully", notification: newNotification });
   } catch (error) {
-    console.error("Error adding notification:", error.response?.data?.message || error.message);
+    res.status(500).json({ success: false, message: "Failed to add notification", error });
   }
-};
-
+});
 
 // ➤ Fetch All Previous Notifications
 router.get("/existing-notification", async (req, res) => {
@@ -53,7 +25,7 @@ router.get("/existing-notification", async (req, res) => {
 });
 
 // ➤ Delete a Notification by ID
-router.delete("/delete-notification/:id", async (req, res) => {
+router.delete("/existing-notification/:id", async (req, res) => {
   try {
     const deletedNotification = await Notification.findByIdAndDelete(req.params.id);
     if (!deletedNotification) {
