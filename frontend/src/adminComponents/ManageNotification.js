@@ -108,7 +108,7 @@ const ManageNotification = () => {
         <thead>
           <tr className="bg-gray-100">
             <th className="p-3 border">Ref No.</th>
-            <th className="p-3 border">Message</th>
+            <th className="p-3 border">Title</th>
             <th className="p-3 border">Date</th>
             <th className="p-3 border">Actions</th>
           </tr>
@@ -119,7 +119,7 @@ const ManageNotification = () => {
             .map((notification) => (
               <tr key={notification._id} className="text-center">
                 <td className="p-3 border">{notification.refNo || "NA"}</td>
-                <td className="p-3 border">{notification.message}</td>
+                <td className="p-3 border">{notification.title}</td>
                 <td className="p-3 border">{new Date(notification.createdAt).toLocaleString()}</td>
                 <td className="p-3 border">
                   <button
