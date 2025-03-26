@@ -3,29 +3,9 @@ const router = express.Router();
 const Notification = require("../models/Notification");
 
 // ➤ Add New Notification
-const authMiddleware = require("../middleware/authMiddleware"); // Ensure authentication middleware is used
-
-router.post("/add", authMiddleware, async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const { title, message, refNo } = req.body;
-    const userId = req.user.id; // Extract user ID from authenticated token
-
-    // ✅ Fetch User from Database
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // ✅ Check if User is an Admin
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to add notifications",
-      });
-    }
 
     // ✅ Check if refNo Already Exists
     let existingNotification = await Notification.findOne({ refNo });
@@ -36,7 +16,7 @@ router.post("/add", authMiddleware, async (req, res) => {
       });
     }
 
-    const newNotification = new Notification({ title, message, refNo, user: userId });
+    const newNotification = new Notification({ title, message, refNo });
     await newNotification.save();
 
     res.status(201).json({
@@ -52,7 +32,6 @@ router.post("/add", authMiddleware, async (req, res) => {
     });
   }
 });
-
 
 // ➤ Fetch All Previous Notifications
 router.get("/existing-notification", async (req, res) => {
