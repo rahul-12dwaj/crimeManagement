@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const NotificationManager = () => {
   const [notifications, setNotifications] = useState([]);
@@ -7,8 +8,6 @@ const NotificationManager = () => {
   const [search, setSearch] = useState("");
   const [currentNotification, setCurrentNotification] = useState({ title: "", message: "" });
   const [showDialog, setShowDialog] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const API_URL = "https://api.example.com/notifications";
 
   useEffect(() => {
     fetchNotifications();
@@ -16,9 +15,9 @@ const NotificationManager = () => {
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await axios.get(API_URL);
-      setNotifications(data);
-      setFilteredNotifications(data);
+      const { data } = await axios.get(`${API_BASE_URL}/api/notification/existing-notification`);
+      setNotifications(data.notifications);
+      setFilteredNotifications(data.notifications);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
@@ -34,11 +33,7 @@ const NotificationManager = () => {
 
   const handleSave = async () => {
     try {
-      if (isEditing) {
-        await axios.put(`${API_URL}/${currentNotification.id}`, currentNotification);
-      } else {
-        await axios.post(API_URL, currentNotification);
-      }
+      await axios.post(`${API_BASE_URL}/api/notification/add`, currentNotification);
       fetchNotifications();
       setShowDialog(false);
     } catch (error) {
@@ -49,7 +44,7 @@ const NotificationManager = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this notification?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/notification/delete-notification/${id}`);
       fetchNotifications();
     } catch (error) {
       console.error("Error deleting notification:", error);
@@ -69,7 +64,6 @@ const NotificationManager = () => {
         />
         <button
           onClick={() => {
-            setIsEditing(false);
             setCurrentNotification({ title: "", message: "" });
             setShowDialog(true);
           }}
@@ -95,16 +89,6 @@ const NotificationManager = () => {
               <td className="border p-2">{new Date(notification.date).toLocaleString()}</td>
               <td className="border p-2">
                 <button
-                  className="bg-yellow-500 text-white px-3 py-1 rounded mr-2"
-                  onClick={() => {
-                    setCurrentNotification(notification);
-                    setIsEditing(true);
-                    setShowDialog(true);
-                  }}
-                >
-                  Edit
-                </button>
-                <button
                   className="bg-red-500 text-white px-3 py-1 rounded"
                   onClick={() => handleDelete(notification.id)}
                 >
@@ -119,7 +103,7 @@ const NotificationManager = () => {
       {showDialog && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h3 className="text-xl font-semibold mb-4">{isEditing ? "Edit" : "New"} Notification</h3>
+            <h3 className="text-xl font-semibold mb-4">New Notification</h3>
             <input
               type="text"
               placeholder="Title"
@@ -135,9 +119,7 @@ const NotificationManager = () => {
             ></textarea>
             <div className="flex justify-end gap-2">
               <button onClick={() => setShowDialog(false)} className="px-4 py-2 border rounded">Cancel</button>
-              <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded">
-                {isEditing ? "Update" : "Create"}
-              </button>
+              <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded">Create</button>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import HeroSection from "./components/HeroSection";
 import HomePage from "./components/HomePage";
 import LoginForm from "./components/LoginForm";

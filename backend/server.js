@@ -7,6 +7,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes"); 
 const firRoutes = require("./routes/firRoutes");
 const crimeRoutes = require("./routes/crimeRoutes");
+const notificationRoutes = require("./routes/notificationRoutes")
 
 dotenv.config(); // Load environment variables
 
@@ -28,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use("/api/auth", authRoutes);
 app.use("/api/fir", firRoutes);
 app.use("/api/crimes", crimeRoutes);
+app.use("/api/notification", notificationRoutes)
 
 // Serve Frontend Static Files
 app.use(express.static(path.join(__dirname, "../frontend/build")));
