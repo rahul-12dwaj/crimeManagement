@@ -51,7 +51,7 @@ const ManageNotification = () => {
     if (!newMessage.trim()) return;
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(`${API_BASE_URL}/api/notification/add-notification`,
+      const response = await axios.post(`${API_BASE_URL}/api/notification/add`,
         { message: newMessage },
         { headers: { Authorization: `Bearer ${token}` } }
       );
