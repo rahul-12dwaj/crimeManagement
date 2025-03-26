@@ -7,7 +7,8 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [error, setError] = useState(null); // ✅ Fix: Added error state
+  const [error, setError] = useState(null);
+  const [selectedNotification, setSelectedNotification] = useState(null); // ✅ New state for modal
 
   useEffect(() => {
     fetchNotifications();
@@ -70,7 +71,14 @@ const Notifications = () => {
               .map((notification) => (
                 <tr key={notification._id} className="text-center">
                   <td className="p-3 border">{notification.refNo || "NA"}</td>
-                  <td className="p-3 border">{notification.title}</td>
+                  <td className="p-3 border">
+                    <button
+                      className="text-blue-600 underline hover:text-blue-800 transition"
+                      onClick={() => setSelectedNotification(notification)}
+                    >
+                      {notification.title}
+                    </button>
+                  </td>
                   <td className="p-3 border">
                     {new Date(notification.createdAt).toLocaleString()}
                   </td>
@@ -78,6 +86,26 @@ const Notifications = () => {
               ))}
           </tbody>
         </table>
+      )}
+
+      {/* ✅ Notification Modal */}
+      {selectedNotification && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              {selectedNotification.title}
+            </h2>
+            <p className="text-gray-700">{selectedNotification.message}</p>
+            <div className="text-center mt-4">
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+                onClick={() => setSelectedNotification(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
