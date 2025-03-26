@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Trash, Search } from "lucide-react";
+import { Trash, Search, PlusCircle } from "lucide-react";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -9,6 +9,8 @@ const ManageNotification = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [newMessage, setNewMessage] = useState("");
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -37,7 +39,6 @@ const ManageNotification = () => {
       await axios.delete(`${API_BASE_URL}/api/notification/delete-notification/${deleteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       setNotifications((prev) => prev.filter((notification) => notification._id !== deleteId));
       setShowDialog(false);
       setDeleteId(null);
@@ -46,19 +47,43 @@ const ManageNotification = () => {
     }
   };
 
+  const handleAddNotification = async () => {
+    if (!newMessage.trim()) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${API_BASE_URL}/api/notification/add-notification`,
+        { message: newMessage },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotifications([...notifications, response.data.notification]);
+      setShowAddDialog(false);
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error adding notification:", error.response?.data?.message || error.message);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">Manage Notifications</h1>
       
-      <div className="relative mb-6">
-        <input
-          type="text"
-          placeholder="Search notifications..."
-          className="w-full p-2 border rounded pl-10"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Search className="absolute left-3 top-3 text-gray-500" size={16} />
+      <div className="flex justify-between items-center mb-6">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search notifications..."
+            className="w-full p-2 border rounded pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Search className="absolute left-3 top-3 text-gray-500" size={16} />
+        </div>
+        <button
+          onClick={() => setShowAddDialog(true)}
+          className="flex items-center bg-green-500 text-white px-4 py-2 rounded"
+        >
+          <PlusCircle size={16} className="mr-2" /> Add Notification
+        </button>
       </div>
 
       <table className="w-full border-collapse border rounded shadow-md">
@@ -94,18 +119,27 @@ const ManageNotification = () => {
           <div className="bg-white p-5 rounded shadow-lg">
             <p className="text-lg font-semibold mb-4">Confirm delete?</p>
             <div className="flex justify-between">
-              <button
-                onClick={() => setShowDialog(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Confirm
-              </button>
+              <button onClick={() => setShowDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
+              <button onClick={handleConfirmDelete} className="px-4 py-2 bg-red-500 text-white rounded">Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAddDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-5 rounded shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Add Notification</h2>
+            <input
+              type="text"
+              placeholder="Enter notification message..."
+              className="w-full p-2 border rounded mb-4"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <div className="flex justify-between">
+              <button onClick={() => setShowAddDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
+              <button onClick={handleAddNotification} className="px-4 py-2 bg-green-500 text-white rounded">Add</button>
             </div>
           </div>
         </div>
