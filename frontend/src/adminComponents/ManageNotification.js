@@ -167,7 +167,7 @@ const ManageNotification = () => {
             />
             <input
               type="text"
-              placeholder="Enter reference number (optional)..."
+              placeholder="Enter reference number..."
               className="w-full p-2 border rounded mb-2"
               value={newReferenceNo}
               onChange={(e) => setNewReferenceNo(e.target.value)}
