@@ -5,8 +5,8 @@ const Notification = require("../models/Notification");
 // ➤ Add New Notification
 router.post("/add", async (req, res) => {
   try {
-    const { title, message } = req.body;
-    const newNotification = new Notification({ title, message });
+    const { title, message, refNo } = req.body;
+    const newNotification = new Notification({ title, message, refNo });
     await newNotification.save();
     res.status(201).json({ success: true, message: "Notification added successfully", notification: newNotification });
   } catch (error) {
