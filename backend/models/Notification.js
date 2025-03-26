@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Counter = require("./counterModel");
 
 const notificationSchema = new mongoose.Schema(
   {
@@ -17,26 +16,13 @@ const notificationSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now, // Automatically stores the date and time
+    },
   },
-  { timestamps: true }
+  { timestamps: true } // This adds createdAt and updatedAt automatically
 );
-
-// Middleware to auto-increment refNo before saving
-notificationSchema.pre("save", async function (next) {
-  if (!this.refNo) {
-    try {
-      const counter = await Counter.findByIdAndUpdate(
-        { _id: "notification" },
-        { $inc: { seq: 1 } },
-        { new: true, upsert: true } // Create if it doesn't exist
-      );
-      this.refNo = counter.seq;
-    } catch (error) {
-      return next(error);
-    }
-  }
-  next();
-});
 
 const Notification = mongoose.model("Notification", notificationSchema);
 
