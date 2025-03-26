@@ -5,6 +5,7 @@ const notificationSchema = new mongoose.Schema(
     refNo: {
       type: Number,
       unique: true,
+      required: true
     },
     title: {
       type: String,
