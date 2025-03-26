@@ -48,20 +48,23 @@ const ManageNotification = () => {
   };
 
   const handleAddNotification = async () => {
-    if (!newMessage.trim()) return;
+    if (!newTitle.trim() || !newMessage.trim()) return;
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(`${API_BASE_URL}/api/notification/add`,
-        { message: newMessage }, // Remove referenceNo, it's auto-generated
+      const response = await axios.post(
+        `${API_BASE_URL}/api/notification/add`,
+        { title: newTitle, message: newMessage }, // Include title field
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNotifications([...notifications, response.data.notification]);
       setShowAddDialog(false);
+      setNewTitle("");
       setNewMessage("");
     } catch (error) {
       console.error("Error adding notification:", error.response?.data?.message || error.message);
     }
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -128,24 +131,39 @@ const ManageNotification = () => {
         </div>
       )}
 
-      {showAddDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-5 rounded shadow-lg w-96">
-            <h2 className="text-lg font-semibold mb-4">Add Notification</h2>
-            <input
-              type="text"
-              placeholder="Enter notification message..."
-              className="w-full p-2 border rounded mb-2"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-            />
-            <div className="flex justify-between">
-              <button onClick={() => setShowAddDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">Cancel</button>
-              <button onClick={handleAddNotification} className="px-4 py-2 bg-green-500 text-white rounded">Add</button>
-            </div>
-          </div>
-        </div>
-      )}
+{showAddDialog && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="bg-white p-5 rounded shadow-lg w-96">
+      <h2 className="text-lg font-semibold mb-4">Add Notification</h2>
+
+      <input
+        type="text"
+        placeholder="Enter notification title..."
+        className="w-full p-2 border rounded mb-2"
+        value={newTitle}
+        onChange={(e) => setNewTitle(e.target.value)}
+      />
+
+      <input
+        type="text"
+        placeholder="Enter notification message..."
+        className="w-full p-2 border rounded mb-2"
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+      />
+
+      <div className="flex justify-between">
+        <button onClick={() => setShowAddDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">
+          Cancel
+        </button>
+        <button onClick={handleAddNotification} className="px-4 py-2 bg-green-500 text-white rounded">
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

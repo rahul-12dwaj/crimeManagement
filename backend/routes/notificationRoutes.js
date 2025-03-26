@@ -1,16 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const Notification = require("../models/Notification");
+const authMiddleware = require("../middleware/authMiddleware");
 
-// ➤ Add New Notification
-router.post("/add", async (req, res) => {
+// Route to add a new notification
+router.post("/add", authMiddleware, async (req, res) => {
   try {
     const { title, message } = req.body;
+    if (!title || !message) {
+      return res.status(400).json({ message: "Title and message are required" });
+    }
+
+    // Create a new notification (refNo is auto-generated in the model)
     const newNotification = new Notification({ title, message });
+
     await newNotification.save();
-    res.status(201).json({ success: true, message: "Notification added successfully", notification: newNotification });
+    res.status(201).json({ message: "Notification added successfully", notification: newNotification });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to add notification", error });
+    console.error("Error adding notification:", error);
+    res.status(500).json({ message: "Server error, try again later" });
   }
 });
 
