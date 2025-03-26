@@ -22,6 +22,26 @@ router.post("/add", authMiddleware, async (req, res) => {
   }
 });
 
+// ➤ Add New Notification
+const handleAddNotification = async () => {
+  if (!newTitle.trim() || !newMessage.trim()) return;
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      `${API_BASE_URL}/api/notification/add`,
+      { title: newTitle, message: newMessage }, // Include title field
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setNotifications([...notifications, response.data.notification]);
+    setShowAddDialog(false);
+    setNewTitle("");
+    setNewMessage("");
+  } catch (error) {
+    console.error("Error adding notification:", error.response?.data?.message || error.message);
+  }
+};
+
+
 // ➤ Fetch All Previous Notifications
 router.get("/existing-notification", async (req, res) => {
   try {
