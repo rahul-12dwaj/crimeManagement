@@ -8,6 +8,7 @@ const NotificationManager = () => {
   const [search, setSearch] = useState("");
   const [currentNotification, setCurrentNotification] = useState({ title: "", message: "" });
   const [showDialog, setShowDialog] = useState(false);
+  const [selectedNotificationId, setSelectedNotificationId] = useState(null); // Stores the selected notification ID
 
   useEffect(() => {
     fetchNotifications();
@@ -43,13 +44,22 @@ const NotificationManager = () => {
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this notification?")) return;
+  
+    console.log("Selected Notification ID:", id);
+    setSelectedNotificationId(id);
+  
+    // Hide the notification immediately from the UI
+    setFilteredNotifications(filteredNotifications.filter(notification => notification.id !== id));
+    setNotifications(notifications.filter(notification => notification.id !== id));
+  
     try {
       await axios.delete(`${API_BASE_URL}/api/notification/delete-notification/${id}`);
-      fetchNotifications();
+      fetchNotifications(); // Refresh data from the server
     } catch (error) {
       console.error("Error deleting notification:", error);
     }
   };
+  
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
