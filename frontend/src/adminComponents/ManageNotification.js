@@ -14,6 +14,7 @@ const ManageNotification = () => {
   const [newReferenceNo, setNewReferenceNo] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedNotification, setSelectedNotification] = useState(null); 
 
   useEffect(() => {
     fetchNotifications();
@@ -119,7 +120,14 @@ const ManageNotification = () => {
             .map((notification) => (
               <tr key={notification._id} className="text-center">
                 <td className="p-3 border">{notification.refNo || "NA"}</td>
-                <td className="p-3 border">{notification.title}</td>
+                <td className="p-3 border">
+                    <button
+                      className="text-blue-600 underline hover:text-blue-800 transition"
+                      onClick={() => setSelectedNotification(notification)}
+                    >
+                      {notification.title}
+                    </button>
+                  </td>
                 <td className="p-3 border">{new Date(notification.createdAt).toLocaleString()}</td>
                 <td className="p-3 border">
                   <button
@@ -181,6 +189,26 @@ const ManageNotification = () => {
               </button>
               <button onClick={handleAddNotification} className="px-4 py-2 bg-green-500 text-white rounded">
                 Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Notification Modal */}
+      {selectedNotification && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              {selectedNotification.title}
+            </h2>
+            <p className="text-gray-700">{selectedNotification.message}</p>
+            <div className="text-center mt-4">
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+                onClick={() => setSelectedNotification(null)}
+              >
+                Close
               </button>
             </div>
           </div>
