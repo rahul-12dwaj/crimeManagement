@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { Trash, Search } from "lucide-react";
+
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const NotificationManager = () => {
+const ManageNotifications = () => {
   const [notifications, setNotifications] = useState([]);
-  const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [search, setSearch] = useState("");
-  const [currentNotification, setCurrentNotification] = useState({ title: "", message: "" });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteId, setDeleteId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedNotificationId, setSelectedNotificationId] = useState(null); // Stores the selected notification ID
 
   useEffect(() => {
     fetchNotifications();
@@ -16,120 +16,96 @@ const NotificationManager = () => {
 
   const fetchNotifications = async () => {
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/api/notification/existing-notification`);
-      setNotifications(data.notifications);
-      setFilteredNotifications(data.notifications);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_BASE_URL}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications(response.data.notifications);
     } catch (error) {
-      console.error("Error fetching notifications:", error);
+      console.error("Error fetching notifications:", error.response?.data?.message || error.message);
     }
   };
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    const filtered = notifications.filter((n) =>
-      n.title.toLowerCase().includes(e.target.value.toLowerCase())
-    );
-    setFilteredNotifications(filtered);
+  const handleDeleteStart = (id) => {
+    setDeleteId(id);
+    setShowDialog(true);
   };
 
-  const handleSave = async () => {
+  const handleConfirmDelete = async () => {
     try {
-      await axios.post(`${API_BASE_URL}/api/notification/add`, currentNotification);
-      fetchNotifications();
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_BASE_URL}/api/notifications/${deleteId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setNotifications((prev) => prev.filter((notification) => notification._id !== deleteId));
       setShowDialog(false);
+      setDeleteId(null);
     } catch (error) {
-      console.error("Error saving notification:", error);
+      console.error("Error deleting notification:", error.response?.data?.message || error.message);
     }
   };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this notification?")) return;
-  
-    console.log("Selected Notification ID:", id);
-    setSelectedNotificationId(id);
-  
-    // Hide the notification immediately from the UI
-    setFilteredNotifications(filteredNotifications.filter(notification => notification.id !== id));
-    setNotifications(notifications.filter(notification => notification.id !== id));
-  
-    try {
-      await axios.delete(`${API_BASE_URL}/api/notification/delete-notification/${id}`);
-      fetchNotifications(); // Refresh data from the server
-    } catch (error) {
-      console.error("Error deleting notification:", error);
-    }
-  };
-  
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-4">Manage Notifications</h2>
-      <div className="flex justify-between mb-4">
+    <div className="max-w-4xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">Manage Notifications</h1>
+      
+      <div className="relative mb-6">
         <input
           type="text"
           placeholder="Search notifications..."
-          value={search}
-          onChange={handleSearch}
-          className="border p-2 rounded w-full"
+          className="w-full p-2 border rounded pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button
-          onClick={() => {
-            setCurrentNotification({ title: "", message: "" });
-            setShowDialog(true);
-          }}
-          className="ml-2 bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          + New Notification
-        </button>
+        <Search className="absolute left-3 top-3 text-gray-500" size={16} />
       </div>
-      <table className="w-full border-collapse border">
+
+      <table className="w-full border-collapse border rounded shadow-md">
         <thead>
           <tr className="bg-gray-100">
-            <th className="border p-2">Title</th>
-            <th className="border p-2">Message</th>
-            <th className="border p-2">Date</th>
-            <th className="border p-2">Actions</th>
+            <th className="p-3 border">Message</th>
+            <th className="p-3 border">Date</th>
+            <th className="p-3 border">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {filteredNotifications.map((notification) => (
-            <tr key={notification.id} className="text-center">
-              <td className="border p-2">{notification.title}</td>
-              <td className="border p-2">{notification.message}</td>
-              <td className="border p-2">{new Date(notification.date).toLocaleString()}</td>
-              <td className="border p-2">
-                <button
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                  onClick={() => handleDelete(notification.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
+          {notifications
+            .filter((n) => n.message.toLowerCase().includes(searchTerm.toLowerCase()))
+            .map((notification) => (
+              <tr key={notification._id} className="text-center">
+                <td className="p-3 border">{notification.message}</td>
+                <td className="p-3 border">{new Date(notification.date).toLocaleString()}</td>
+                <td className="p-3 border">
+                  <button
+                    onClick={() => handleDeleteStart(notification._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded flex items-center"
+                  >
+                    <Trash size={14} className="mr-1" /> Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
       {showDialog && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h3 className="text-xl font-semibold mb-4">New Notification</h3>
-            <input
-              type="text"
-              placeholder="Title"
-              value={currentNotification.title}
-              onChange={(e) => setCurrentNotification({ ...currentNotification, title: e.target.value })}
-              className="border p-2 rounded w-full mb-2"
-            />
-            <textarea
-              placeholder="Message"
-              value={currentNotification.message}
-              onChange={(e) => setCurrentNotification({ ...currentNotification, message: e.target.value })}
-              className="border p-2 rounded w-full mb-2"
-            ></textarea>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setShowDialog(false)} className="px-4 py-2 border rounded">Cancel</button>
-              <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded">Create</button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-5 rounded shadow-lg">
+            <p className="text-lg font-semibold mb-4">Confirm delete?</p>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setShowDialog(false)}
+                className="px-4 py-2 bg-gray-500 text-white rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Confirm
+              </button>
             </div>
           </div>
         </div>
@@ -138,4 +114,4 @@ const NotificationManager = () => {
   );
 };
 
-export default NotificationManager;
+export default ManageNotifications;
