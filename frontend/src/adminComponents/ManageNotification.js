@@ -17,7 +17,7 @@ const ManageNotifications = () => {
   const fetchNotifications = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_BASE_URL}/api/notifications`, {
+      const response = await axios.get(`${API_BASE_URL}/api/notifications/existing-notification`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications(response.data.notifications);
@@ -34,7 +34,7 @@ const ManageNotifications = () => {
   const handleConfirmDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${API_BASE_URL}/api/notifications/${deleteId}`, {
+      await axios.delete(`${API_BASE_URL}/api/notifications/delete-notification/${deleteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
