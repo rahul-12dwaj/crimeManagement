@@ -53,18 +53,33 @@ const ManageNotification = () => {
   };
 
   const handleAddNotification = async () => {
-    if (!newTitle.trim() || !newMessage.trim()) {
-      setError("Title and message are required.");
+    if (!newTitle.trim() || !newMessage.trim() || !newReferenceNo.trim()) {
+      setError("Title, Message & Reference Number are required.");
       return;
     }
+  
     try {
       setError(null);
       const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user")); // Assuming user data is stored in localStorage
+      const userId = user?._id; // Extract userId
+  
+      if (!userId) {
+        setError("User data is missing. Please log in again.");
+        return;
+      }
+  
       const response = await axios.post(
         `${API_BASE_URL}/api/notification/add`,
-        { title: newTitle, message: newMessage, refNo: newReferenceNo || "NA" },
+        { 
+          title: newTitle, 
+          message: newMessage, 
+          refNo: newReferenceNo || "NA",
+          userId // Include userId in the request body
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+  
       setNotifications([...notifications, response.data.notification]);
       setShowAddDialog(false);
       setNewTitle("");
@@ -74,6 +89,7 @@ const ManageNotification = () => {
       setError(error.response?.data?.message || "Error adding notification");
     }
   };
+  
 
   return (
     <div className="max-w-4xl mx-auto">

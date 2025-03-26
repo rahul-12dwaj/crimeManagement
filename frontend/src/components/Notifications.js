@@ -7,6 +7,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState(null); // ✅ Fix: Added error state
 
   useEffect(() => {
     fetchNotifications();
@@ -25,10 +26,11 @@ const Notifications = () => {
     }
   };
 
-
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">Manage Notifications</h1>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">
+        Notifications
+      </h1>
 
       {error && (
         <div className="bg-red-100 text-red-700 p-3 mb-4 rounded flex items-center">
@@ -37,7 +39,7 @@ const Notifications = () => {
       )}
 
       <div className="flex justify-between items-center mb-6">
-        <div className="relative">
+        <div className="relative w-full">
           <input
             type="text"
             placeholder="Search notifications..."
@@ -49,30 +51,34 @@ const Notifications = () => {
         </div>
       </div>
 
-      <table className="w-full border-collapse border rounded shadow-md">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-3 border">Ref No.</th>
-            <th className="p-3 border">Title</th>
-            <th className="p-3 border">Date</th>
-            <th className="p-3 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {notifications
-            .filter((n) => n.message.toLowerCase().includes(searchTerm.toLowerCase()))
-            .map((notification) => (
-              <tr key={notification._id} className="text-center">
-                <td className="p-3 border">{notification.refNo || "NA"}</td>
-                <td className="p-3 border">{notification.title}</td>
-                <td className="p-3 border">{new Date(notification.createdAt).toLocaleString()}</td>
-                <td className="p-3 border">
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-
+      {notifications.length === 0 ? (
+        <p className="text-gray-600 text-center">No notifications available.</p>
+      ) : (
+        <table className="w-full border-collapse border rounded shadow-md bg-white">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-3 border">Ref No.</th>
+              <th className="p-3 border">Title</th>
+              <th className="p-3 border">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {notifications
+              .filter((n) =>
+                n.title.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((notification) => (
+                <tr key={notification._id} className="text-center">
+                  <td className="p-3 border">{notification.refNo || "NA"}</td>
+                  <td className="p-3 border">{notification.title}</td>
+                  <td className="p-3 border">
+                    {new Date(notification.createdAt).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
