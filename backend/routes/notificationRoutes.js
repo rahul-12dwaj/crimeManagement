@@ -48,7 +48,7 @@ router.get("/existing-notification", async (req, res) => {
 });
 
 // ➤ Delete a Notification by ID
-router.delete("/existing-notification/:id", async (req, res) => {
+router.delete("/delete-notification/:id", async (req, res) => {
   try {
     const deletedNotification = await Notification.findByIdAndDelete(req.params.id);
     if (!deletedNotification) {
