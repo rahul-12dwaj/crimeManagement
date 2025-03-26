@@ -70,7 +70,7 @@ const AdminSidebar = () => {
 
             {/* Notification Management */}
             <NavLink
-              to="/admin/manage-notifications"
+              to="/admin/managenotifications"
               className={({ isActive }) =>
                 `flex items-center space-x-2 p-2 rounded hover:bg-gray-300 ${isActive ? "bg-gray-300" : ""}`
               }

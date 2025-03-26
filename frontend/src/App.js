@@ -15,7 +15,7 @@ import AdminDashboard from "./adminComponents/AdminDashboard";
 import ManageUsers from "./adminComponents/ManageUsers";
 import ManageReports from "./adminComponents/ManageReports";
 import ManageCrimeStats from "./adminComponents/ManageCrimeStats";
-
+import ManageNotification from "./adminComponents/ManageNotification"
 // Protected Route for normal users
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -66,6 +66,7 @@ function App() {
           <Route path="manageusers" element={<ManageUsers />} />
           <Route path="managereports" element={<ManageReports />} />
           <Route path="managecrimestats" element={<ManageCrimeStats />} />
+          <Route path="managenotifications" element={<ManageNotification />} />
         </Route>
       </Routes>
   );
