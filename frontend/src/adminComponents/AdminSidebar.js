@@ -40,7 +40,7 @@ const AdminSidebar = () => {
 
             {/* Crime Stats */}
             <NavLink
-              to="/c/managecrimestats"
+              to="/adminhomepage/managecrimestats"
               className={({ isActive }) =>
                 `flex items-center space-x-2 p-2 rounded hover:bg-gray-300 ${isActive ? "bg-gray-300" : ""}`
               }
