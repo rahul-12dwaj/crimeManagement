@@ -4,7 +4,7 @@ import { Trash, Search } from "lucide-react";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const ManageNotifications = () => {
+const ManageNotification = () => {
   const [notifications, setNotifications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState(null);
@@ -114,4 +114,4 @@ const ManageNotifications = () => {
   );
 };
 
-export default ManageNotifications;
+export default ManageNotification;
