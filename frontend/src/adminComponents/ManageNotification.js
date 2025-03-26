@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Trash, Search, PlusCircle } from "lucide-react";
+import { Trash, Search, PlusCircle, XCircle } from "lucide-react";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -10,9 +10,10 @@ const ManageNotification = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [newMessage, setNewMessage] = useState("");
-  const [newTitle, setNewTitle] = useState(""); // ✅ Fix: Add missing state
-  const [newReferenceNo, setNewReferenceNo] = useState(""); // ✅ Fix: Add missing state
+  const [newTitle, setNewTitle] = useState("");
+  const [newReferenceNo, setNewReferenceNo] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchNotifications();
@@ -20,13 +21,14 @@ const ManageNotification = () => {
 
   const fetchNotifications = async () => {
     try {
+      setError(null);
       const token = localStorage.getItem("token");
       const response = await axios.get(`${API_BASE_URL}/api/notification/existing-notification`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications(response.data.notifications);
     } catch (error) {
-      console.error("Error fetching notifications:", error.response?.data?.message || error.message);
+      setError(error.response?.data?.message || "Failed to fetch notifications");
     }
   };
 
@@ -37,6 +39,7 @@ const ManageNotification = () => {
 
   const handleConfirmDelete = async () => {
     try {
+      setError(null);
       const token = localStorage.getItem("token");
       await axios.delete(`${API_BASE_URL}/api/notification/delete-notification/${deleteId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -45,13 +48,17 @@ const ManageNotification = () => {
       setShowDialog(false);
       setDeleteId(null);
     } catch (error) {
-      console.error("Error deleting notification:", error.response?.data?.message || error.message);
+      setError(error.response?.data?.message || "Error deleting notification");
     }
   };
 
   const handleAddNotification = async () => {
-    if (!newTitle.trim() || !newMessage.trim()) return;
+    if (!newTitle.trim() || !newMessage.trim()) {
+      setError("Title and message are required.");
+      return;
+    }
     try {
+      setError(null);
       const token = localStorage.getItem("token");
       const response = await axios.post(
         `${API_BASE_URL}/api/notification/add`,
@@ -60,18 +67,24 @@ const ManageNotification = () => {
       );
       setNotifications([...notifications, response.data.notification]);
       setShowAddDialog(false);
-      setNewTitle(""); // ✅ Reset title input
-      setNewMessage(""); // ✅ Reset message input
-      setNewReferenceNo(""); // ✅ Reset reference number input
+      setNewTitle("");
+      setNewMessage("");
+      setNewReferenceNo("");
     } catch (error) {
-      console.error("Error adding notification:", error.response?.data?.message || error.message);
+      setError(error.response?.data?.message || "Error adding notification");
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4 text-center text-blue-600">Manage Notifications</h1>
-      
+
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 mb-4 rounded flex items-center">
+          <XCircle size={18} className="mr-2" /> {error}
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <div className="relative">
           <input
@@ -145,7 +158,6 @@ const ManageNotification = () => {
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
             />
-
             <input
               type="text"
               placeholder="Enter notification message..."
@@ -153,7 +165,6 @@ const ManageNotification = () => {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
             />
-
             <input
               type="text"
               placeholder="Enter reference number (optional)..."
@@ -161,6 +172,8 @@ const ManageNotification = () => {
               value={newReferenceNo}
               onChange={(e) => setNewReferenceNo(e.target.value)}
             />
+
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
             <div className="flex justify-between">
               <button onClick={() => setShowAddDialog(false)} className="px-4 py-2 bg-gray-500 text-white rounded">
